@@ -44,7 +44,7 @@ const SECTIONS = [
 ];
 
 const REACTIONS = [
-  { id: 'need',      kr: '올 수도 있을 것 같다',  en: 'This could happen',    color: '#FF3366', shape: 'star6'     },
+  { id: 'need',      kr: '있을 수 있을 거 같다',  en: 'This could happen',    color: '#FF3366', shape: 'star6'     },
   { id: 'future',    kr: '너무 미래적',   en: 'Too futuristic', color: '#00BBFF', shape: 'burst'     },
   { id: 'real',      kr: '너무 현실적',   en: 'Too real',       color: '#FF6B00', shape: 'hourglass' },
   { id: 'relate',    kr: '공감돼',        en: 'I feel this',    color: '#9B59B6', shape: 'infinity'  },
@@ -488,6 +488,24 @@ function drawResultPage(s) {
   textFont('Pretendard, sans-serif');
   textSize(mob?10:12); textStyle(NORMAL); textAlign(CENTER,BASELINE);
   text('총 ' + totalAll + '명이 반응했습니다', width/2, bottomY);
+
+  // 리셋 버튼
+  const rw = mob?110:130, rh = mob?28:32;
+  const rx = width/2 - rw/2, ry = bottomY + 10;
+  const hovReset = state.hoveredArrow === 'reset';
+  noStroke();
+  fill(hovReset ? color(...s.accent) : color(...s.accent, 18));
+  rect(rx, ry, rw, rh, 4);
+  stroke(...s.accent, hovReset?255:80); strokeWeight(1); noFill();
+  rect(rx, ry, rw, rh, 4);
+  noStroke();
+  fill(hovReset ? color(...s.barBg) : color(...s.accent));
+  textFont('Pretendard, sans-serif');
+  textSize(mob?8:9); textStyle(BOLD); textAlign(CENTER,CENTER);
+  text('↺  통계 초기화', rx+rw/2, ry+rh/2);
+
+  // 리셋 버튼 위치 저장
+  state.resetBtn = {x:rx, y:ry, w:rw, h:rh};
 }
 
 // ─── BUTTON BAR ──────────────────────────────────────────────────────────────
@@ -624,6 +642,9 @@ function mouseMoved(){
   state.hoveredNav=foundNav;
   if(i>0&&dist(mouseX,mouseY,28,cy)<18)                        state.hoveredArrow='prev';
   else if(i<SECTIONS.length-1&&dist(mouseX,mouseY,width-28,cy)<18) state.hoveredArrow='next';
+  else if(state.resetBtn && SECTIONS[state.currentSection].id==='result' &&
+    mouseX>=state.resetBtn.x && mouseX<=state.resetBtn.x+state.resetBtn.w &&
+    mouseY>=state.resetBtn.y && mouseY<=state.resetBtn.y+state.resetBtn.h) state.hoveredArrow='reset';
   else state.hoveredArrow='';
   document.body.style.cursor=(foundBtn>=0||foundNav>=0||state.hoveredArrow!=='')?'pointer':'default';
 }
@@ -635,6 +656,24 @@ function mousePressed(){
 
   if(i>0&&dist(mouseX,mouseY,28,cy)<18){state.currentSection--;return false;}
   if(i<SECTIONS.length-1&&dist(mouseX,mouseY,width-28,cy)<18){state.currentSection++;return false;}
+
+  // 리셋 버튼 클릭
+  if(state.resetBtn && sId==='result' &&
+    mouseX>=state.resetBtn.x && mouseX<=state.resetBtn.x+state.resetBtn.w &&
+    mouseY>=state.resetBtn.y && mouseY<=state.resetBtn.y+state.resetBtn.h) {
+    if(confirm('통계를 초기화할까요?')) {
+      if(typeof db !== 'undefined') {
+        db.ref('votes').remove();
+        db.ref('floaters').remove();
+      }
+      SECTIONS.forEach(s => {
+        state.userVotes[s.id] = new Set();
+        REACTIONS.forEach(r => { state.votes[s.id][r.id] = 0; });
+      });
+      state.floaters = [];
+    }
+    return false;
+  }
   for(const t of tabs){ if(mouseX>=t.x&&mouseX<=t.x+t.w&&mouseY>=t.y&&mouseY<=t.y+t.h){state.currentSection=t.i;return false;} }
 
   // result 페이지에서는 투표 안 됨
@@ -664,3 +703,4 @@ function keyPressed(){
   if(keyCode===RIGHT_ARROW&&state.currentSection<SECTIONS.length-1) state.currentSection++;
   if(keyCode===LEFT_ARROW &&state.currentSection>0)                  state.currentSection--;
 }
+function touchStarted(){ mousePressed(); return false; }
