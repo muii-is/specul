@@ -64,6 +64,7 @@ const state = {
   hoveredNav: -1,
   hoveredArrow: '',
   fbReady: false,
+  resetBtn: {x:0, y:0, w:130, h:32}, // 초기값
 };
 
 SECTIONS.forEach(s => {
