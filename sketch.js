@@ -144,7 +144,7 @@ function getBtnZone() {
 }
 
 function getNavTabs() {
-  const labels = ['WORLD','AQ','STILL','LUSTER','SILHOUETTE','RESULT'];
+  const labels = ['WORLD','SILHOUETTE','LUSTER','STILL','AQ','RESULT'];
   const mob = isMobile();
   const tabW = mob ? 50 : 72, tabH = mob ? 20 : 24, gap = mob ? 3 : 4;
   const totalW = SECTIONS.length * tabW + (SECTIONS.length-1) * gap;
@@ -260,7 +260,7 @@ function drawArrows(s) {
 function drawDots(s) {
   const y=height-(isMobile()?120:145);
   const gap=12, startX=(width-(SECTIONS.length-1)*gap)/2;
-  const labels=['WORLD','AQ CLINIC','STILL','LUSTER','SILHOUETTE','RESULT'];
+  const labels=['WORLD','SILHOUETTE','LUSTER','STILL','AQ CLINIC','RESULT'];
   for(let i=0;i<SECTIONS.length;i++){
     const active=i===state.currentSection;
     noStroke();
