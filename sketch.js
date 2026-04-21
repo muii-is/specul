@@ -13,6 +13,7 @@ const SECTIONS = [
     subtitle: 'Upgrade your taste. Earn your place.',
     bg: [237,232,245], accent: [90,60,140], sub: [140,110,180], barBg: [230,224,242],
     tagline: 'AQ 91.5  ━  AESTHETIC QUOTIENT', tagColor: [140,110,180],
+    reactionOverride: { need: { kr: '나라면 살 거 같다', en: 'I want this' } },
   },
   {
     id: 'still',
@@ -20,6 +21,7 @@ const SECTIONS = [
     subtitle: 'When emotions leak, the mask deploys.',
     bg: [36,38,42], accent: [210,210,215], sub: [120,120,128], barBg: [36,38,42],
     tagline: 'SILENCE IS COMPLIANCE', tagColor: [90,92,98],
+    reactionOverride: { need: { kr: '나라면 살 거 같다', en: 'I want this' } },
   },
   {
     id: 'luster',
@@ -27,6 +29,7 @@ const SECTIONS = [
     subtitle: 'The perfect polished head, at home.',
     bg: [245,244,240], accent: [60,60,60], sub: [140,136,130], barBg: [238,236,230],
     tagline: 'Model: S-AI Pro 1.0', tagColor: [160,156,148],
+    reactionOverride: { need: { kr: '나라면 살 거 같다', en: 'I want this' } },
   },
   {
     id: 'silhouette',
@@ -34,6 +37,7 @@ const SECTIONS = [
     subtitle: 'Because not everything needs to be said.',
     bg: [240,228,222], accent: [100,50,60], sub: [170,110,115], barBg: [235,220,214],
     tagline: 'SPEAK LESS.  BE MORE.', tagColor: [170,110,115],
+    reactionOverride: { need: { kr: '나라면 살 거 같다', en: 'I want this' } },
   },
   {
     id: 'result',
@@ -537,14 +541,18 @@ function drawButtonBar(s) {
 
     if(voted){ fill(r.color); noStroke(); ellipse(x,y-zone.btnR*.92,5,5); }
 
+    const ovr = s.reactionOverride && s.reactionOverride[r.id];
+    const kr  = ovr ? ovr.kr : r.kr;
+    const en  = ovr ? ovr.en : r.en;
+
     noStroke();
     fill(voted?color(r.color):color(...s.accent,175));
     textFont('Pretendard, sans-serif');
     textSize(mob?8:10); textStyle(voted?BOLD:NORMAL); textAlign(CENTER,TOP);
-    text(r.kr,x,y+zone.btnR*.82);
+    text(kr,x,y+zone.btnR*.82);
     fill(voted?color(r.color):color(...s.sub));
     textSize(mob?7:8); textStyle(NORMAL);
-    text(r.en,x,y+zone.btnR*.82+(mob?12:14));
+    text(en,x,y+zone.btnR*.82+(mob?12:14));
     if(count>0){
       fill(voted?color(r.color):color(...s.sub));
       textSize(mob?8:9); textStyle(BOLD);
