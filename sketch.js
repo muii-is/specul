@@ -44,7 +44,7 @@ const SECTIONS = [
 ];
 
 const REACTIONS = [
-  { id: 'need',      kr: '나라면 필요해',  en: 'I need this',    color: '#FF3366', shape: 'star6'     },
+  { id: 'need',      kr: '올 수도 있을 것 같다',  en: 'This could happen',    color: '#FF3366', shape: 'star6'     },
   { id: 'future',    kr: '너무 미래적',   en: 'Too futuristic', color: '#00BBFF', shape: 'burst'     },
   { id: 'real',      kr: '너무 현실적',   en: 'Too real',       color: '#FF6B00', shape: 'hourglass' },
   { id: 'relate',    kr: '공감돼',        en: 'I feel this',    color: '#9B59B6', shape: 'infinity'  },
@@ -68,7 +68,7 @@ const state = {
 
 SECTIONS.forEach(s => {
   state.votes[s.id] = {};
-  state.userVotes[s.id] = null;
+  state.userVotes[s.id] = new Set(); // 다중 선택 — Set으로 관리
   REACTIONS.forEach(r => { state.votes[s.id][r.id] = 0; });
 });
 
@@ -504,7 +504,7 @@ function drawButtonBar(s) {
   for(let i=0;i<REACTIONS.length;i++){
     const r=REACTIONS[i];
     const x=zone.startX+i*zone.spacing, y=zone.y;
-    const voted=state.userVotes[sId]===r.id;
+    const voted=state.userVotes[sId].has(r.id);
     const hov=state.hoveredBtn===i;
     const count=state.votes[sId][r.id]||0;
 
@@ -643,15 +643,17 @@ function mousePressed(){
   for(let j=0;j<REACTIONS.length;j++){
     const bx=zone.startX+j*zone.spacing;
     if(dist(mouseX,mouseY,bx,zone.y)<zone.btnR+10){
-      const r=REACTIONS[j], prev=state.userVotes[sId];
-      if(prev===r.id){
+      const r=REACTIONS[j];
+      const userSet=state.userVotes[sId];
+      if(userSet.has(r.id)){
+        // 이미 선택 → 취소
         firebaseVote(sId,r.id,-1);
-        state.userVotes[sId]=null;
+        userSet.delete(r.id);
       } else {
-        if(prev) firebaseVote(sId,prev,-1);
+        // 새로 선택 — 다른 것 취소 없이 추가
         firebaseVote(sId,r.id,1);
-        state.userVotes[sId]=r.id;
-        for(let k=0;k<4;k++) spawnFloater(j,bx+random(-20,20),zone.y+random(-24,-4));
+        userSet.add(r.id);
+        for(let k=0;k<1;k++) spawnFloater(j,bx+random(-20,20),zone.y+random(-24,-4));
       }
       return false;
     }
@@ -662,4 +664,3 @@ function keyPressed(){
   if(keyCode===RIGHT_ARROW&&state.currentSection<SECTIONS.length-1) state.currentSection++;
   if(keyCode===LEFT_ARROW &&state.currentSection>0)                  state.currentSection--;
 }
-function touchStarted(){ mousePressed(); return false; }
