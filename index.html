@@ -4,22 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SPECUL — Reaction Dashboard</title>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-      width: 100%; height: 100%;
-      overflow: hidden;
-      background: #F0EDE6;
-      font-family: 'Pretendard', sans-serif;
-      touch-action: none;
-    }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #F0EDE6; touch-action: none; }
     canvas { display: block; }
   </style>
 </head>
 <body>
+  <script>
+    // Firebase 초기화
+    const firebaseConfig = {
+      apiKey: "AIzaSyDz7dRsieTF6nUc2E-lf1kQ8iW6K5R5sS0",
+      authDomain: "specul-2e534.firebaseapp.com",
+      databaseURL: "https://specul-2e534-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "specul-2e534",
+      storageBucket: "specul-2e534.firebasestorage.app",
+      messagingSenderId: "861320912407",
+      appId: "1:861320912407:web:b5395ab9b7d69985a98652"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
   <script src="sketch.js"></script>
 </body>
 </html>
